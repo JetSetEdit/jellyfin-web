@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jellyfin Web – Home wireframe</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: system-ui, sans-serif; background: #0a0a0a; color: #ccc; }
+        .wireframe { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+
+        /* Top bar */
+        .topbar {
+            height: 56px;
+            border: 1px dashed #444;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1rem;
+            margin-bottom: 0;
+        }
+        .topbar-left { font-size: 1.25rem; color: #888; }
+        .topbar-center { display: flex; gap: 1.5rem; color: #666; }
+        .topbar-right { width: 40px; height: 40px; border: 1px dashed #444; border-radius: 50%; }
+
+        /* Hero banner – always visible */
+        .hero {
+            aspect-ratio: 16 / 7;
+            max-height: 400px;
+            margin-bottom: 0;
+            position: relative;
+            border: 2px dashed #0d6efd;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f1a 100%);
+        }
+        .hero-label {
+            position: absolute;
+            top: 0.5rem;
+            left: 0.5rem;
+            font-size: 0.7rem;
+            color: #0d6efd;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .hero-content {
+            position: absolute;
+            left: 2rem;
+            right: 40%;
+            bottom: 2rem;
+        }
+        .hero-title { font-size: 1.75rem; font-weight: 700; color: #fff; margin: 0 0 0.25rem 0; }
+        .hero-overview { font-size: 0.9rem; color: rgba(255,255,255,0.85); margin: 0.5rem 0 1rem 0; line-height: 1.4; }
+        .hero-buttons { display: flex; gap: 0.75rem; }
+        .btn { padding: 0.5rem 1rem; border: 1px dashed #555; font-size: 0.85rem; cursor: default; }
+        .btn-play { background: #0d6efd; color: #fff; border-color: #0d6efd; }
+        .btn-info { background: rgba(255,255,255,0.2); color: #fff; }
+
+        /* Gradient fade at bottom of hero */
+        .hero-fade {
+            position: absolute;
+            left: 0; right: 0; bottom: 0;
+            height: 50%;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            pointer-events: none;
+        }
+
+        /* Sections below (no Movies/Shows row) */
+        .sections { padding: 1.5rem 0; }
+        .section { margin-bottom: 2rem; }
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.75rem;
+            padding-left: 0.25rem;
+        }
+        .section-row {
+            display: flex;
+            gap: 0.75rem;
+            overflow-x: auto;
+            padding: 0.25rem 0;
+        }
+        .card {
+            flex: 0 0 160px;
+            aspect-ratio: 2/3;
+            border: 1px dashed #333;
+            background: #1a1a1a;
+            border-radius: 4px;
+        }
+        .card-label { font-size: 0.75rem; color: #666; padding: 0.25rem; }
+
+        .note {
+            margin-top: 2rem;
+            padding: 1rem;
+            border: 1px solid #333;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="wireframe">
+        <header class="topbar">
+            <span class="topbar-left">[ Logo ]</span>
+            <nav class="topbar-center">Favorites · Collections · Home Videos · Movies · TV Shows</nav>
+            <div class="topbar-right"></div>
+        </header>
+
+        <main>
+            <!-- Always-visible hero banner -->
+            <section class="hero" aria-label="Featured">
+                <span class="hero-label">Hero banner (always visible)</span>
+                <div class="hero-fade"></div>
+                <div class="hero-content">
+                    <h1 class="hero-title">Show or Movie Title</h1>
+                    <p class="hero-overview">Short description or overview text. When you have resume / latest / next up, this shows that item.</p>
+                    <div class="hero-buttons">
+                        <span class="btn btn-play">▶ Play</span>
+                        <span class="btn btn-info">ℹ Info</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Content sections (Movies/Shows row removed) -->
+            <div class="sections">
+                <div class="section">
+                    <h2 class="section-title">Continue Watching</h2>
+                    <div class="section-row">
+                        <div class="card"><div class="card-label">card</div></div>
+                        <div class="card"><div class="card-label">card</div></div>
+                        <div class="card"><div class="card-label">card</div></div>
+                        <div class="card"><div class="card-label">card</div></div>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2 class="section-title">Next up</h2>
+                    <div class="section-row">
+                        <div class="card"><div class="card-label">card</div></div>
+                        <div class="card"><div class="card-label">card</div></div>
+                        <div class="card"><div class="card-label">card</div></div>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2 class="section-title">Latest in Movies / TV</h2>
+                    <div class="section-row">
+                        <div class="card"><div class="card-label">card</div></div>
+                        <div class="card"><div class="card-label">card</div></div>
+                        <div class="card"><div class="card-label">card</div></div>
+                        <div class="card"><div class="card-label">card</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="note">
+                <strong>What changed:</strong> Top = always-visible hero (backdrop + title + Play/Info). No “Movies / Shows” library row; sections start with Continue Watching, Next up, Latest, etc.
+            </div>
+        </main>
+    </div>
+</body>
+</html>

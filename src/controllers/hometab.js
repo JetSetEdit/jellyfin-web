@@ -1,6 +1,7 @@
 import * as userSettings from '../scripts/settings/userSettings';
 import focusManager from '../components/focusManager';
 import homeSections from '../components/homesections/homesections';
+import { loadHero, destroyHero } from '../components/homeHero/homeHero';
 import { ServerConnections } from 'lib/jellyfin-apiclient';
 
 import '../elements/emby-itemscontainer/emby-itemscontainer';
@@ -11,6 +12,14 @@ class HomeTab {
         this.params = params;
         this.apiClient = ServerConnections.currentApiClient();
         this.sectionsContainer = view.querySelector('.sections');
+        this.heroContainer = view.querySelector('.homeHero');
+        // If this view has .sections but no .homeHero (e.g. different layout/template), inject hero container
+        if (this.sectionsContainer && !this.heroContainer) {
+            this.heroContainer = document.createElement('div');
+            this.heroContainer.className = 'homeHero';
+            this.heroContainer.id = 'homeHero';
+            this.sectionsContainer.parentNode.insertBefore(this.heroContainer, this.sectionsContainer);
+        }
         view.querySelector('.sections').addEventListener('settingschange', onHomeScreenSettingsChanged.bind(this));
     }
     onResume(options) {
@@ -28,7 +37,11 @@ class HomeTab {
         const apiClient = this.apiClient;
         this.destroyHomeSections();
         this.sectionsRendered = true;
-        return apiClient.getCurrentUser()
+
+        const heroPromise = this.heroContainer ? loadHero(this.heroContainer, apiClient) : Promise.resolve();
+
+        return heroPromise
+            .then(() => apiClient.getCurrentUser())
             .then(user => homeSections.loadSections(view.querySelector('.sections'), apiClient, user, userSettings))
             .then(() => {
                 if (options.autoFocus) {
@@ -53,6 +66,9 @@ class HomeTab {
         this.sectionsContainer = null;
     }
     destroyHomeSections() {
+        if (this.heroContainer) {
+            destroyHero(this.heroContainer);
+        }
         const sectionsContainer = this.sectionsContainer;
 
         if (sectionsContainer) {

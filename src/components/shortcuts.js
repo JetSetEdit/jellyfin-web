@@ -410,6 +410,15 @@ export function onClick(e) {
             }
         }
 
+        // If card has no data-action, use the clicked element or a descendant of card that has it (e.g. hero buttons)
+        if (!action && card.contains(e.target)) {
+            const fromTarget = e.target.closest ? e.target.closest('[data-action]') : null;
+            if (fromTarget && card.contains(fromTarget)) {
+                actionElement = fromTarget;
+                action = fromTarget.getAttribute('data-action');
+            }
+        }
+
         if (action && action !== ItemAction.None) {
             executeAction(card, actionElement, action);
 
