@@ -23,12 +23,24 @@ function getItemLogoUrl(apiClient, item) {
 import './homeHero.scss';
 
 const CAROUSEL_SIZE = 5;
-const AUTO_ADVANCE_MS = 6000;
+const AUTO_ADVANCE_MS = 7000;
+const FADE_DURATION_MS = 350;
 const baseOpts = {
-    Fields: 'PrimaryImageAspectRatio',
+    Fields: 'PrimaryImageAspectRatio,Taglines,Genres,OfficialRating,ProductionYear',
     ImageTypeLimit: 1,
     EnableImageTypes: 'Primary,Backdrop,Thumb,Logo'
 };
+
+const TAGLINE_ACCENT_COUNT = 7;
+
+/** Hash item id to 0..TAGLINE_ACCENT_COUNT-1 so the same item always gets the same accent. */
+function getTaglineAccentIndex(itemId) {
+    if (!itemId) return 0;
+    const s = String(itemId);
+    let h = 5381;
+    for (let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0;
+    return h % TAGLINE_ACCENT_COUNT;
+}
 
 /** True if item has logo metadata (own logo or parent/series logo). */
 function hasLogo(item) {
@@ -93,13 +105,17 @@ function setSlideContent(elem, apiClient, item) {
     const contentEl = elem.querySelector('.homeHeroContent');
     if (!contentEl || !item) return;
 
-    const backdropUrl = getItemBackdropImageUrl(apiClient, item, { maxWidth: 1920 });
+    // Request 16:7 fill so server center-crops once at hero aspect ratio
+const backdropUrl = getItemBackdropImageUrl(apiClient, item, { fillWidth: 1920, fillHeight: 840 });
     const logoUrl = getItemLogoUrl(apiClient, item);
     const title = item.SeriesName || item.Name || '';
     const subtitle = item.SeriesName ? item.Name : '';
+    const tagline = item.Taglines?.[0] || '';
     const overview = item.Overview || '';
     const overviewShort = overview.length > 180 ? overview.substring(0, 180).trim() + '…' : overview;
     const positionTicks = item.UserData?.PlaybackPositionTicks || 0;
+    const metaParts = [item.OfficialRating, item.ProductionYear, ...(item.Genres || [])].filter(Boolean);
+    const metaRow = metaParts.join(' • ');
 
     const playLabel = globalize.translate('Play');
     const infoLabel = globalize.translate('ButtonInfo');
@@ -114,6 +130,13 @@ function setSlideContent(elem, apiClient, item) {
         inner += '<img class="homeHeroLogo" src="' + escapeHtml(logoUrl) + '" alt="' + escapeHtml(title) + '" loading="eager" />';
     } else {
         inner += '<h1 class="homeHeroTitle">' + escapeHtml(title) + (subtitle ? ' <span class="homeHeroSubtitle">' + escapeHtml(subtitle) + '</span>' : '') + '</h1>';
+    }
+    if (tagline) {
+        const accentIndex = getTaglineAccentIndex(item.Id);
+        inner += '<p class="homeHeroTagline homeHeroTagline--accent' + accentIndex + '">' + escapeHtml(tagline) + '</p>';
+    }
+    if (metaRow) {
+        inner += '<p class="homeHeroMeta">' + escapeHtml(metaRow) + '</p>';
     }
     if (overviewShort) {
         inner += '<p class="homeHeroOverview">' + escapeHtml(overviewShort) + '</p>';
@@ -173,9 +196,19 @@ function renderCarousel(elem, apiClient, items) {
 
     function goTo(index) {
         const len = state.items.length;
-        state.currentIndex = ((index % len) + len) % len;
-        setSlideContent(elem, state.apiClient, state.items[state.currentIndex]);
-        elem.querySelectorAll('.homeHeroDot').forEach((d, i) => d.classList.toggle('homeHeroDot-active', i === state.currentIndex));
+        const newIndex = ((index % len) + len) % len;
+        if (newIndex === state.currentIndex) {
+            setSlideContent(elem, state.apiClient, state.items[state.currentIndex]);
+            elem.querySelectorAll('.homeHeroDot').forEach((d, i) => d.classList.toggle('homeHeroDot-active', i === state.currentIndex));
+            return;
+        }
+        state.currentIndex = newIndex;
+        elem.classList.add('is-transitioning');
+        setTimeout(() => {
+            setSlideContent(elem, state.apiClient, state.items[state.currentIndex]);
+            elem.querySelectorAll('.homeHeroDot').forEach((d, i) => d.classList.toggle('homeHeroDot-active', i === state.currentIndex));
+            elem.classList.remove('is-transitioning');
+        }, FADE_DURATION_MS);
     }
 
     function next() {
@@ -191,6 +224,19 @@ function renderCarousel(elem, apiClient, items) {
         if (state.timer) clearInterval(state.timer);
         state.timer = setInterval(next, AUTO_ADVANCE_MS);
     }
+
+    function stopAutoAdvance() {
+        if (state.timer) clearInterval(state.timer);
+        state.timer = null;
+    }
+    function onMouseLeave() {
+        if (state.items.length > 1) resetAutoAdvance();
+    }
+
+    elem.addEventListener('mouseenter', stopAutoAdvance);
+    elem.addEventListener('mouseleave', onMouseLeave);
+    state.onMouseLeave = onMouseLeave;
+    state.stopAutoAdvance = stopAutoAdvance;
 
     elem.querySelector('.homeHeroArrowPrev').addEventListener('click', prev);
     elem.querySelector('.homeHeroArrowNext').addEventListener('click', next);
@@ -214,7 +260,11 @@ function renderCarousel(elem, apiClient, items) {
 export function destroyHero(elem) {
     if (!elem) return;
     const state = elem._heroCarousel;
-    if (state && state.timer) clearInterval(state.timer);
+    if (state) {
+        if (state.timer) clearInterval(state.timer);
+        if (state.stopAutoAdvance) elem.removeEventListener('mouseenter', state.stopAutoAdvance);
+        if (state.onMouseLeave) elem.removeEventListener('mouseleave', state.onMouseLeave);
+    }
     elem._heroCarousel = null;
     itemShortcuts.off(elem);
     elem.innerHTML = '';

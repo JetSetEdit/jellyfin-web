@@ -19,9 +19,14 @@
     right: 0;
     bottom: 0;
     background-repeat: no-repeat;
-    background-position: center center;
+    background-position: right center;
     background-size: cover;
-    transition: opacity 0.4s ease;
+    transition: opacity 0.35s ease;
+}
+
+.homeHero.is-transitioning .homeHeroBackdrop,
+.homeHero.is-transitioning .homeHeroContent {
+    opacity: 0;
 }
 
 .homeHeroBackdrop-empty {
@@ -30,11 +35,11 @@
 
 .homeHeroGradient {
     position: absolute;
+    top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    height: 60%;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.4) 40%, transparent 100%);
+    background: linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.92) 18%, rgba(0, 0, 0, 0.5) 45%, transparent 65%);
     pointer-events: none;
 }
 
@@ -76,13 +81,12 @@
 .homeHeroDots {
     position: absolute;
     bottom: 1.25rem;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 3em;
     z-index: 2;
     display: flex;
     gap: 0.5rem;
-    flex-wrap: wrap;
-    justify-content: center;
+    align-items: center;
+    justify-content: flex-start;
 }
 
 .homeHeroDot {
@@ -93,7 +97,7 @@
     padding: 0;
     background: rgba(255, 255, 255, 0.4);
     cursor: pointer;
-    transition: background 0.2s;
+    transition: background 0.2s, width 0.2s ease;
 
     &:hover {
         background: rgba(255, 255, 255, 0.7);
@@ -101,8 +105,9 @@
 }
 
 .homeHeroDot-active {
+    width: 1.5rem;
+    border-radius: 999px;
     background: #fff;
-    transform: scale(1.2);
 }
 
 .homeHeroContent {
@@ -110,12 +115,13 @@
     left: 0;
     right: 0;
     bottom: 0;
-    padding: 2em 3em 2.5em 3em;
+    padding: 2em 3em 4rem 3em;
+    transition: opacity 0.35s ease;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     align-items: flex-start;
-    max-width: 50em;
+    max-width: 42em;
 }
 
 .homeHeroLogo {
@@ -130,17 +136,44 @@
 }
 
 .homeHeroTitle {
-    margin: 0 0 0.25em 0;
+    margin: 0 0 0.2em 0;
     font-size: clamp(1.75rem, 4vw, 2.75rem);
     font-weight: 700;
     line-height: 1.2;
     color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .homeHeroSubtitle {
     font-weight: 400;
     opacity: 0.9;
+}
+
+.homeHeroTagline {
+    margin: 0 0 0.35em 0;
+    font-size: clamp(0.8rem, 1.8vw, 1rem);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+
+    &.homeHeroTagline--accent0 { color: #e63946; }   /* red */
+    &.homeHeroTagline--accent1 { color: #f4a261; }   /* orange */
+    &.homeHeroTagline--accent2 { color: #00b4d8; }   /* cyan */
+    &.homeHeroTagline--accent3 { color: #fee440; }   /* yellow */
+    &.homeHeroTagline--accent4 { color: #9b5de5; }   /* violet */
+    &.homeHeroTagline--accent5 { color: #06d6a0; }   /* green */
+    &.homeHeroTagline--accent6 { color: #ef476f; }   /* pink */
+}
+
+.homeHeroMeta {
+    margin: 0 0 0.5em 0;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.75);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
 }
 
 .homeHeroOverview {
@@ -177,17 +210,17 @@
 }
 
 .homeHeroBtnPlay {
-    background-color: #0d6efd;
-    color: #fff;
+    background-color: #fff;
+    color: #000;
 
     &:hover {
-        background-color: #0b5ed7;
-        color: #fff;
+        background-color: rgba(255, 255, 255, 0.9);
+        color: #000;
     }
 }
 
 .homeHeroBtnInfo {
-    background-color: rgba(255, 255, 255, 0.25);
+    background-color: rgba(255, 255, 255, 0.2);
     color: #fff;
 
     &:hover {
@@ -198,7 +231,11 @@
 
 @media (max-width: 50em) {
     .homeHeroContent {
-        padding: 1.5em 1.5em 2em 1.5em;
+        padding: 1.5em 1.5em 3.5rem 1.5em;
+    }
+
+    .homeHeroDots {
+        left: 1.5em;
     }
 
     .homeHeroOverview {
