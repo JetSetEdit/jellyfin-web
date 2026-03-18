@@ -4,7 +4,8 @@ const common = require('./webpack.common');
 
 // Use this when developing against a Jellyfin server on another machine (e.g. Pi).
 // Avoids CORS: browser talks to same-origin /jellyfin, dev server proxies to the Pi.
-const JELLYFIN_SERVER = process.env.JELLYFIN_SERVER || 'http://192.168.68.124:8096';
+// Default: Pi over Tailscale (works from any network). Override: JELLYFIN_SERVER=http://192.168.68.124:8096 for local LAN.
+const JELLYFIN_SERVER = process.env.JELLYFIN_SERVER || 'http://100.74.84.18:8096';
 
 module.exports = merge(common, {
     // In order for live reload to work we must use "web" as the target not "browserslist"
