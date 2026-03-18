@@ -1,15 +1,54 @@
+/* Viewport-fixed layer so hero image stays in place on scroll (avoids transform/fixed issues) */
+.homeHeroFixedBackdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: cover;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+
+    &.homeHeroFixedBackdrop-visible {
+        opacity: 1;
+    }
+}
+
 .homeHero {
     position: relative;
     width: 100%;
-    aspect-ratio: 16 / 7;
-    min-height: 200px;
-    max-height: min(56vw, 520px);
+    height: 85vh;
+    height: 85dvh;
+    min-height: 85vh;
+    min-height: 85dvh;
+    flex-shrink: 0;
     overflow: hidden;
-    background-color: #101010;
+    background-color: transparent;
 
     &.hide {
         display: none;
     }
+}
+
+/* Sections over fixed hero; semi-transparent so hero image stays visible behind */
+.homePage .sections,
+#homeTab .sections {
+    position: relative;
+    z-index: 1;
+    background-color: rgba(16, 16, 16, 0.82);
+}
+
+.homePage .sections .verticalSection,
+#homeTab .sections .verticalSection {
+    background: transparent;
+}
+
+/* Transparent header over hero (BINGE-style: navbar floats over hero image) */
+body.homeHeroActive .skinHeader {
+    background-color: transparent !important;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 100%) !important;
+    opacity: 1;
 }
 
 .homeHeroBackdrop {
@@ -230,6 +269,10 @@
 }
 
 @media (max-width: 50em) {
+    .homeHeroBackdrop {
+        background-attachment: scroll;
+    }
+
     .homeHeroContent {
         padding: 1.5em 1.5em 3.5rem 1.5em;
     }

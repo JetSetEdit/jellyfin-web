@@ -76,6 +76,30 @@ function getFeaturedItems(apiClient) {
  * @param {ApiClient} apiClient - API client
  * @returns {Promise<void>}
  */
+const FIXED_BACKDROP_CLASS = 'homeHeroFixedBackdrop';
+
+const BODY_HERO_ACTIVE_CLASS = 'homeHeroActive';
+
+function ensureFixedBackdrop(elem) {
+    if (elem._heroFixedBackdrop) return elem._heroFixedBackdrop;
+    const page = elem.closest('.homePage') || elem.closest('.page') || elem.closest('[data-role="page"]') || elem.parentNode?.parentNode;
+    if (!page) return null;
+    document.body.classList.add(BODY_HERO_ACTIVE_CLASS);
+    const div = document.createElement('div');
+    div.className = FIXED_BACKDROP_CLASS;
+    div.setAttribute('aria-hidden', 'true');
+    page.insertBefore(div, page.firstChild);
+    elem._heroFixedBackdrop = div;
+    return div;
+}
+
+function removeFixedBackdrop(elem) {
+    const div = elem?._heroFixedBackdrop;
+    if (div?.parentNode) div.parentNode.removeChild(div);
+    if (elem) elem._heroFixedBackdrop = null;
+    document.body.classList.remove(BODY_HERO_ACTIVE_CLASS);
+}
+
 export function loadHero(elem, apiClient) {
     if (!elem || !apiClient) return Promise.resolve();
 
@@ -85,8 +109,10 @@ export function loadHero(elem, apiClient) {
         .then(items => {
             if (!items || items.length === 0) {
                 renderEmptyBanner(elem);
+                removeFixedBackdrop(elem);
                 return;
             }
+            ensureFixedBackdrop(elem);
             renderCarousel(elem, apiClient, items);
         })
         .catch(err => {
@@ -120,7 +146,15 @@ const backdropUrl = getItemBackdropImageUrl(apiClient, item, { fillWidth: 1920, 
     const playLabel = globalize.translate('Play');
     const infoLabel = globalize.translate('ButtonInfo');
 
-    if (backdropEl) {
+    const fixedBackdrop = elem._heroFixedBackdrop;
+    if (fixedBackdrop) {
+        fixedBackdrop.style.backgroundImage = backdropUrl ? `url('${escapeHtml(backdropUrl)}')` : '';
+        fixedBackdrop.classList.toggle('homeHeroFixedBackdrop-visible', !!backdropUrl);
+        if (backdropEl) {
+            backdropEl.classList.remove('homeHeroBackdrop-empty');
+            backdropEl.style.backgroundImage = ''; // fixed layer shows image; hero backdrop stays transparent
+        }
+    } else if (backdropEl) {
         backdropEl.classList.remove('homeHeroBackdrop-empty');
         backdropEl.style.backgroundImage = backdropUrl ? `url('${escapeHtml(backdropUrl)}')` : '';
     }
@@ -266,6 +300,7 @@ export function destroyHero(elem) {
         if (state.onMouseLeave) elem.removeEventListener('mouseleave', state.onMouseLeave);
     }
     elem._heroCarousel = null;
+    removeFixedBackdrop(elem);
     itemShortcuts.off(elem);
     elem.innerHTML = '';
     elem.classList.add('hide');
