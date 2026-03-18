@@ -30,7 +30,9 @@
     }
   ],
   "menuLinks": [],
-  "servers": [],
+  "servers": [
+    "http://localhost:8081/jellyfin"
+  ],
   "plugins": [
     "playAccessValidation/plugin",
     "experimentalWarnings/plugin",
