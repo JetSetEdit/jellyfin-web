@@ -24,7 +24,8 @@ import './homeHero.scss';
 
 const CAROUSEL_SIZE = 5;
 const AUTO_ADVANCE_MS = 7000;
-const FADE_DURATION_MS = 350;
+const FADE_OUT_MS = 320;
+const HOLD_BLACK_MS = 140;
 const baseOpts = {
     Fields: 'PrimaryImageAspectRatio,Taglines,Genres,OfficialRating,ProductionYear',
     ImageTypeLimit: 1,
@@ -77,6 +78,7 @@ function getFeaturedItems(apiClient) {
  * @returns {Promise<void>}
  */
 const FIXED_BACKDROP_CLASS = 'homeHeroFixedBackdrop';
+const FIXED_GRADIENT_CLASS = 'homeHeroFixedGradient';
 const BODY_HERO_ACTIVE_CLASS = 'homeHeroActive';
 
 function ensureFixedBackdrop(elem) {
@@ -88,7 +90,12 @@ function ensureFixedBackdrop(elem) {
     div.className = FIXED_BACKDROP_CLASS;
     div.setAttribute('aria-hidden', 'true');
     page.insertBefore(div, page.firstChild);
+    const gradientEl = document.createElement('div');
+    gradientEl.className = FIXED_GRADIENT_CLASS;
+    gradientEl.setAttribute('aria-hidden', 'true');
+    div.after(gradientEl);
     elem._heroFixedBackdrop = div;
+    elem._heroFixedGradient = gradientEl;
     return div;
 }
 
@@ -98,9 +105,14 @@ function removeFixedBackdrop(elem) {
         elem._heroBackdropScrollCleanup = null;
     }
     const div = elem?._heroFixedBackdrop;
-    if (div?.parentNode) div.parentNode.removeChild(div);
+    if (div?.parentNode) {
+        const next = div.nextElementSibling;
+        if (next && next.classList.contains(FIXED_GRADIENT_CLASS)) next.remove();
+        div.parentNode.removeChild(div);
+    }
     if (elem) {
         elem._heroFixedBackdrop = null;
+        elem._heroFixedGradient = null;
         document.body.classList.remove(BODY_HERO_ACTIVE_CLASS);
     }
 }
@@ -122,7 +134,13 @@ function getRecentlyAddedAnchor() {
  */
 function setupBackdropScrollFade(elem) {
     const backdrop = elem._heroFixedBackdrop;
+    const gradient = elem._heroFixedGradient;
     if (!backdrop) return;
+
+    const setOpacity = (value) => {
+        backdrop.style.opacity = value;
+        if (gradient) gradient.style.opacity = value;
+    };
 
     let anchorEl = null;
 
@@ -134,21 +152,19 @@ function setupBackdropScrollFade(elem) {
         const scrollY = window.scrollY ?? window.pageYOffset;
 
         if (!anchor) {
-            // No section found: fade after ~60vh of scroll
             const thresholdStart = viewportHeight * 0.5;
             const thresholdEnd = viewportHeight * 1.2;
             const t = Math.max(0, Math.min(1, (scrollY - thresholdStart) / (thresholdEnd - thresholdStart)));
-            backdrop.style.opacity = String(1 - t);
+            setOpacity(String(1 - t));
             return;
         }
 
         const rect = anchor.getBoundingClientRect();
         const anchorTop = rect.top + scrollY;
-        // Fade from when section top is 30% down the viewport to when it's at the top
         const fadeStart = anchorTop - viewportHeight * 0.5;
         const fadeEnd = anchorTop - viewportHeight * 0.1;
         const t = fadeEnd <= fadeStart ? 1 : Math.max(0, Math.min(1, (scrollY - fadeStart) / (fadeEnd - fadeStart)));
-        backdrop.style.opacity = String(1 - t);
+        setOpacity(String(1 - t));
     }
 
     const onScroll = () => {
@@ -161,6 +177,7 @@ function setupBackdropScrollFade(elem) {
     elem._heroBackdropScrollCleanup = () => {
         window.removeEventListener('scroll', onScroll);
         backdrop.style.removeProperty('opacity');
+        if (gradient) gradient.style.removeProperty('opacity');
     };
 }
 
@@ -291,7 +308,10 @@ function renderCarousel(elem, apiClient, items) {
     function setActiveDotProgressDuration() {
         const activeDot = elem.querySelector('.homeHeroDot-active');
         const progressEl = activeDot?.querySelector('.homeHeroDot-progress');
-        if (progressEl) progressEl.style.animationDuration = AUTO_ADVANCE_MS + 'ms';
+        if (!progressEl) return;
+        progressEl.style.animation = 'none';
+        progressEl.offsetHeight; // force reflow so animation restarts
+        progressEl.style.animation = `homeHeroDotProgress ${AUTO_ADVANCE_MS}ms linear forwards`;
     }
 
     const state = {
@@ -313,12 +333,18 @@ function renderCarousel(elem, apiClient, items) {
         }
         state.currentIndex = newIndex;
         elem.classList.add('is-transitioning');
+        const fixedBackdrop = elem._heroFixedBackdrop;
+        const fixedGradient = elem._heroFixedGradient;
+        if (fixedBackdrop) fixedBackdrop.classList.add('homeHeroFixedBackdrop-transitioning');
+        if (fixedGradient) fixedGradient.classList.add('homeHeroFixedGradient-transitioning');
         setTimeout(() => {
             setSlideContent(elem, state.apiClient, state.items[state.currentIndex]);
             elem.querySelectorAll('.homeHeroDot').forEach((d, i) => d.classList.toggle('homeHeroDot-active', i === state.currentIndex));
             setActiveDotProgressDuration();
+            if (fixedBackdrop) fixedBackdrop.classList.remove('homeHeroFixedBackdrop-transitioning');
+            if (fixedGradient) fixedGradient.classList.remove('homeHeroFixedGradient-transitioning');
             elem.classList.remove('is-transitioning');
-        }, FADE_DURATION_MS);
+        }, FADE_OUT_MS + HOLD_BLACK_MS);
     }
 
     function next() {

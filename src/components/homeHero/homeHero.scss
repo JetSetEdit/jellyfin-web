@@ -8,10 +8,14 @@
     background-size: cover;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.35s ease;
+    transition: opacity 0.32s ease-in-out;
 
     &.homeHeroFixedBackdrop-visible {
         opacity: 1;
+    }
+
+    &.homeHeroFixedBackdrop-transitioning {
+        opacity: 0;
     }
 }
 
@@ -22,8 +26,23 @@ body.homeHeroActive:not(.sandboxPage) .homeHeroFixedBackdrop {
     min-height: calc(100dvh - 48px);
 }
 
+/* Full-viewport gradient so it starts at the top (under navbar); keep behind hero content (z-index 0, same as backdrop) */
+.homeHeroFixedGradient {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.4) 28%, rgba(0, 0, 0, 0.15) 50%, transparent 70%);
+    pointer-events: none;
+    transition: opacity 0.32s ease-in-out;
+
+    &.homeHeroFixedGradient-transitioning {
+        opacity: 0;
+    }
+}
+
 .homeHero {
     position: relative;
+    z-index: 1;
     width: 100%;
     height: 85vh;
     height: 85dvh;
@@ -80,7 +99,11 @@ body.sandboxPage.homeHeroActive .MuiAppBar-root {
     background-repeat: no-repeat;
     background-position: right center;
     background-size: cover;
-    transition: opacity 0.35s ease;
+    transition: opacity 0.32s ease-in-out;
+}
+
+.homeHeroContent {
+    transition: opacity 0.32s ease-in-out;
 }
 
 .homeHero.is-transitioning .homeHeroBackdrop,
@@ -288,6 +311,7 @@ body.sandboxPage.homeHeroActive .MuiAppBar-root {
     padding: 0.5em 1.25em;
     font-size: 1rem;
     font-weight: 600;
+    border-radius: 0.5em;
 
     .material-icons {
         font-size: 1.4em;

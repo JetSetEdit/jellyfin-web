@@ -25,3 +25,4 @@ This skill points to where important UI and structure are implemented so you can
 - **Navbar/hero overrides, legacy skinHeader:** See [references/layout.md](references/layout.md) for SCSS selectors and body classes.
 - **Routes, async routes, dashboard vs wizard:** See [references/layout.md](references/layout.md) for route tables and entry points.
 - **Hero carousel reference (BINGE-style):** See [references/hero-reference-binge.md](references/hero-reference-binge.md) for Swiper-style structure, multi-line titles, editorial label, tags, and actions to align the home hero with.
+- **Do's and don'ts:** See [references/dos-and-donts.md](references/dos-and-donts.md) for patterns to follow and pitfalls to avoid (hero, navbar, skills). **Update this file as you work** when you learn something new.
