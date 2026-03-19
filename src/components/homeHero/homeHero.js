@@ -77,7 +77,6 @@ function getFeaturedItems(apiClient) {
  * @returns {Promise<void>}
  */
 const FIXED_BACKDROP_CLASS = 'homeHeroFixedBackdrop';
-
 const BODY_HERO_ACTIVE_CLASS = 'homeHeroActive';
 
 function ensureFixedBackdrop(elem) {
@@ -94,10 +93,75 @@ function ensureFixedBackdrop(elem) {
 }
 
 function removeFixedBackdrop(elem) {
+    if (elem?._heroBackdropScrollCleanup) {
+        elem._heroBackdropScrollCleanup();
+        elem._heroBackdropScrollCleanup = null;
+    }
     const div = elem?._heroFixedBackdrop;
     if (div?.parentNode) div.parentNode.removeChild(div);
-    if (elem) elem._heroFixedBackdrop = null;
-    document.body.classList.remove(BODY_HERO_ACTIVE_CLASS);
+    if (elem) {
+        elem._heroFixedBackdrop = null;
+        document.body.classList.remove(BODY_HERO_ACTIVE_CLASS);
+    }
+}
+
+/** Find the first section heading that contains "Recently Added" (e.g. "Recently Added in Movies"). */
+function getRecentlyAddedAnchor() {
+    const page = document.querySelector('.homePage') || document.querySelector('#homeTab');
+    if (!page) return null;
+    const titles = page.querySelectorAll('.sections .sectionTitle, .sections h2.sectionTitle');
+    for (const el of titles) {
+        if (el.textContent && el.textContent.includes('Recently Added')) return el;
+    }
+    return null;
+}
+
+/**
+ * Fade the fixed backdrop to 0% opacity based on scroll depth once we reach the "Recently Added" section.
+ * @param {HTMLElement} elem - Hero container (has _heroFixedBackdrop)
+ */
+function setupBackdropScrollFade(elem) {
+    const backdrop = elem._heroFixedBackdrop;
+    if (!backdrop) return;
+
+    let anchorEl = null;
+
+    function updateBackdropOpacity() {
+        const anchor = anchorEl || getRecentlyAddedAnchor();
+        if (anchor) anchorEl = anchor;
+
+        const viewportHeight = window.innerHeight;
+        const scrollY = window.scrollY ?? window.pageYOffset;
+
+        if (!anchor) {
+            // No section found: fade after ~60vh of scroll
+            const thresholdStart = viewportHeight * 0.5;
+            const thresholdEnd = viewportHeight * 1.2;
+            const t = Math.max(0, Math.min(1, (scrollY - thresholdStart) / (thresholdEnd - thresholdStart)));
+            backdrop.style.opacity = String(1 - t);
+            return;
+        }
+
+        const rect = anchor.getBoundingClientRect();
+        const anchorTop = rect.top + scrollY;
+        // Fade from when section top is 30% down the viewport to when it's at the top
+        const fadeStart = anchorTop - viewportHeight * 0.5;
+        const fadeEnd = anchorTop - viewportHeight * 0.1;
+        const t = fadeEnd <= fadeStart ? 1 : Math.max(0, Math.min(1, (scrollY - fadeStart) / (fadeEnd - fadeStart)));
+        backdrop.style.opacity = String(1 - t);
+    }
+
+    const onScroll = () => {
+        requestAnimationFrame(updateBackdropOpacity);
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    updateBackdropOpacity();
+
+    elem._heroBackdropScrollCleanup = () => {
+        window.removeEventListener('scroll', onScroll);
+        backdrop.style.removeProperty('opacity');
+    };
 }
 
 export function loadHero(elem, apiClient) {
@@ -113,6 +177,7 @@ export function loadHero(elem, apiClient) {
                 return;
             }
             ensureFixedBackdrop(elem);
+            setupBackdropScrollFade(elem);
             renderCarousel(elem, apiClient, items);
         })
         .catch(err => {

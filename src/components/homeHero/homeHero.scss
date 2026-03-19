@@ -15,6 +15,13 @@
     }
 }
 
+/* Start hero image below the navbar so it doesn’t sit under the banner and cause a jump on first scroll */
+body.homeHeroActive:not(.sandboxPage) .homeHeroFixedBackdrop {
+    top: 48px;
+    height: calc(100vh - 48px);
+    min-height: calc(100dvh - 48px);
+}
+
 .homeHero {
     position: relative;
     width: 100%;
@@ -44,13 +51,24 @@
     background: transparent;
 }
 
-/* Transparent header over hero (BINGE-style: navbar floats over hero image) */
-body.homeHeroActive .skinHeader {
-    background-color: transparent !important;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 100%) !important;
-    opacity: 1;
-    -webkit-backdrop-filter: blur(10px) !important;
-    backdrop-filter: blur(10px) !important;
+/* Solid navbar when hero is active (legacy .skinHeader and experimental MUI AppBar) */
+body.homeHeroActive .skinHeader.skinHeader-withBackground,
+body.homeHeroActive .skinHeader.semiTransparent {
+    background: #101010 !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+body.homeHeroActive .MuiAppBar-root {
+    background: rgba(16, 16, 16, 0.5) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    backdrop-filter: blur(12px) !important;
+}
+
+/* Sandbox: let hero image cross under navbar (transparent nav so image shows through) */
+body.sandboxPage.homeHeroActive .MuiAppBar-root {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 100%) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    backdrop-filter: blur(8px) !important;
 }
 
 .homeHeroBackdrop {
@@ -74,15 +92,15 @@ body.homeHeroActive .skinHeader {
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f1a 100%);
 }
 
-.homeHeroGradient {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.92) 18%, rgba(0, 0, 0, 0.5) 45%, transparent 65%);
-    pointer-events: none;
-}
+// .homeHeroGradient {
+//     position: absolute;
+//     top: 0;
+//     left: 0;
+//     right: 0;
+//     bottom: 0;
+//     background: linear-gradient(to right, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.4) 28%, rgba(0, 0, 0, 0.15) 50%, transparent 70%);
+//     pointer-events: none;
+// }
 
 .homeHeroArrow {
     position: absolute;

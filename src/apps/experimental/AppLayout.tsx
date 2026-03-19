@@ -38,7 +38,11 @@ export const Component = () => {
                             position='fixed'
                             sx={{
                                 width: '100%',
-                                ml: 0
+                                ml: 0,
+                                backgroundColor: 'rgba(16, 16, 16, 0.5)',
+                                color: 'rgba(255, 255, 255, 0.95)',
+                                backdropFilter: 'blur(12px)',
+                                WebkitBackdropFilter: 'blur(12px)'
                             }}
                         >
                             <AppToolbar
