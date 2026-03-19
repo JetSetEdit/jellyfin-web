@@ -49,6 +49,8 @@ body.homeHeroActive .skinHeader {
     background-color: transparent !important;
     background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 100%) !important;
     opacity: 1;
+    -webkit-backdrop-filter: blur(10px) !important;
+    backdrop-filter: blur(10px) !important;
 }
 
 .homeHeroBackdrop {
@@ -129,6 +131,7 @@ body.homeHeroActive .skinHeader {
 }
 
 .homeHeroDot {
+    position: relative;
     width: 0.5rem;
     height: 0.5rem;
     border-radius: 50%;
@@ -137,16 +140,41 @@ body.homeHeroActive .skinHeader {
     background: rgba(255, 255, 255, 0.4);
     cursor: pointer;
     transition: background 0.2s, width 0.2s ease;
+    overflow: hidden;
 
     &:hover {
         background: rgba(255, 255, 255, 0.7);
     }
 }
 
+.homeHeroDot-progress {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0;
+    background: #fff;
+    border-radius: inherit;
+    animation: homeHeroDotProgress linear forwards;
+}
+
 .homeHeroDot-active {
     width: 1.5rem;
     border-radius: 999px;
-    background: #fff;
+    background: rgba(255, 255, 255, 0.4);
+
+    .homeHeroDot-progress {
+        animation-name: homeHeroDotProgress;
+    }
+}
+
+.homeHero:hover .homeHeroDot-active .homeHeroDot-progress {
+    animation-play-state: paused;
+}
+
+@keyframes homeHeroDotProgress {
+    from { width: 0%; }
+    to { width: 100%; }
 }
 
 .homeHeroContent {

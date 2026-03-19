@@ -217,7 +217,16 @@ function renderCarousel(elem, apiClient, items) {
         dot.className = 'homeHeroDot' + (i === 0 ? ' homeHeroDot-active' : '');
         dot.setAttribute('aria-label', `Slide ${i + 1}`);
         dot.dataset.index = String(i);
+        const progress = document.createElement('span');
+        progress.className = 'homeHeroDot-progress';
+        dot.appendChild(progress);
         dotsContainer.appendChild(dot);
+    }
+
+    function setActiveDotProgressDuration() {
+        const activeDot = elem.querySelector('.homeHeroDot-active');
+        const progressEl = activeDot?.querySelector('.homeHeroDot-progress');
+        if (progressEl) progressEl.style.animationDuration = AUTO_ADVANCE_MS + 'ms';
     }
 
     const state = {
@@ -234,6 +243,7 @@ function renderCarousel(elem, apiClient, items) {
         if (newIndex === state.currentIndex) {
             setSlideContent(elem, state.apiClient, state.items[state.currentIndex]);
             elem.querySelectorAll('.homeHeroDot').forEach((d, i) => d.classList.toggle('homeHeroDot-active', i === state.currentIndex));
+            setActiveDotProgressDuration();
             return;
         }
         state.currentIndex = newIndex;
@@ -241,6 +251,7 @@ function renderCarousel(elem, apiClient, items) {
         setTimeout(() => {
             setSlideContent(elem, state.apiClient, state.items[state.currentIndex]);
             elem.querySelectorAll('.homeHeroDot').forEach((d, i) => d.classList.toggle('homeHeroDot-active', i === state.currentIndex));
+            setActiveDotProgressDuration();
             elem.classList.remove('is-transitioning');
         }, FADE_DURATION_MS);
     }
