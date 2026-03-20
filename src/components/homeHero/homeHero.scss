@@ -15,7 +15,8 @@
     }
 
     &.homeHeroFixedBackdrop-transitioning {
-        opacity: 0;
+        /* Beat scroll-driven inline opacity so slide crossfade still works */
+        opacity: 0 !important;
     }
 }
 
@@ -36,7 +37,7 @@ body.homeHeroActive:not(.sandboxPage) .homeHeroFixedBackdrop {
     transition: opacity 0.32s ease-in-out;
 
     &.homeHeroFixedGradient-transitioning {
-        opacity: 0;
+        opacity: 0 !important;
     }
 }
 

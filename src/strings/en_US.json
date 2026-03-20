@@ -168,6 +168,8 @@
     "ClearQueue": "Clear queue",
     "ClientSettings": "Client Settings",
     "Collections": "Collections",
+    "HomeQuickCollectionPlaceholder": "Empty slot",
+    "HomeQuickCollectionPlaceholderHint": "Create box sets in your library to fill this row.",
     "Colorist": "Colorist",
     "ColorPrimaries": "Primary colors",
     "ColorSpace": "Color space",

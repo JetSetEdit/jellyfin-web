@@ -137,9 +137,18 @@ function setupBackdropScrollFade(elem) {
     const gradient = elem._heroFixedGradient;
     if (!backdrop) return;
 
+    // Use inline opacity only while scroll-fading. At full visibility, clear inline so
+    // .homeHeroFixedBackdrop-visible can animate 0→1 on first paint and .homeHeroFixedBackdrop-transitioning can win via !important during slides.
     const setOpacity = (value) => {
-        backdrop.style.opacity = value;
-        if (gradient) gradient.style.opacity = value;
+        const n = parseFloat(value);
+        if (Number.isNaN(n)) return;
+        if (n >= 1) {
+            backdrop.style.removeProperty('opacity');
+            if (gradient) gradient.style.removeProperty('opacity');
+        } else {
+            backdrop.style.opacity = String(n);
+            if (gradient) gradient.style.opacity = String(n);
+        }
     };
 
     let anchorEl = null;
@@ -194,8 +203,9 @@ export function loadHero(elem, apiClient) {
                 return;
             }
             ensureFixedBackdrop(elem);
-            setupBackdropScrollFade(elem);
+            // Carousel first so first slide sets backdrop + .visible before scroll fade runs (otherwise inline opacity 1 blocks the fade-in).
             renderCarousel(elem, apiClient, items);
+            setupBackdropScrollFade(elem);
         })
         .catch(err => {
             console.error('[homeHero] failed to load', err);

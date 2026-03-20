@@ -29,6 +29,8 @@
     "Books": "Books",
     "Channels": "Channels",
     "Collections": "Collections",
+    "HomeQuickCollectionPlaceholder": "Empty slot",
+    "HomeQuickCollectionPlaceholderHint": "Create box sets in your library to fill this row.",
     "Folders": "Folders",
     "Genres": "Genres",
     "HeaderAlbumArtists": "Album artists",

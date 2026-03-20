@@ -1,6 +1,6 @@
 ---
 name: jellyfin-codebase-layout
-description: Where key UI and app structure live in the Jellyfin web client (jellyfin-web). Use when locating or changing navbar/AppBar, home hero, routing (experimental vs stable), layout mode, themes, or top-level app structure.
+description: Where key UI and app structure live in the Jellyfin web client (jellyfin-web). Use when locating or changing navbar/AppBar, home hero, home quick tiles under the hero, routing (experimental vs stable), layout mode, themes, or top-level app structure.
 ---
 
 # Jellyfin Web Codebase Layout
@@ -15,6 +15,7 @@ This skill points to where important UI and structure are implemented so you can
 |---------------|----------------|
 | **Navbar (bar + text) color** | Default: `apps/experimental/AppLayout.tsx` (AppBar `sx`). When home hero is active: `components/homeHero/homeHero.scss` (`body.homeHeroActive .MuiAppBar-root`). Sandbox transparent nav: same file, `body.sandboxPage.homeHeroActive .MuiAppBar-root`. |
 | **Home hero (carousel, backdrop)** | `components/homeHero/homeHero.js`, `components/homeHero/homeHero.scss`. |
+| **Home quick tiles (5 under hero)** | `components/homeQuickCollections/homeQuickCollections.js`, `homeQuickCollections.scss`. Loaded from `controllers/hometab.js` (`loadQuickCollections`, `destroyQuickCollections`). DOM: `.homeQuickCollections` between `.homeHero` and `.sections` in `controllers/home.html` and `apps/experimental/routes/home.tsx`. |
 | **Experimental vs stable app** | `RootAppRouter.tsx` chooses `EXPERIMENTAL_APP_ROUTES` vs `STABLE_APP_ROUTES` via layout mode. Experimental layout: `apps/experimental/AppLayout.tsx` + `apps/experimental/routes/`. Stable: `apps/stable/`. |
 | **Layout mode** | `constants/layoutMode`, `components/layoutManager.js`; persisted via `LAYOUT_SETTING_KEY`. Default is experimental. |
 | **Toolbar contents** | Shared: `components/toolbar/AppToolbar.tsx`. Experimental wrapper: `apps/experimental/components/AppToolbar/index.tsx`. |
