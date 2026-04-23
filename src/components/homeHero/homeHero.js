@@ -232,9 +232,6 @@ const backdropUrl = getItemBackdropImageUrl(apiClient, item, { fillWidth: 1920, 
     const overview = item.Overview || '';
     const overviewShort = overview.length > 180 ? overview.substring(0, 180).trim() + '…' : overview;
     const positionTicks = item.UserData?.PlaybackPositionTicks || 0;
-    const metaParts = [item.OfficialRating, item.ProductionYear, ...(item.Genres || [])].filter(Boolean);
-    const metaRow = metaParts.join(' • ');
-
     const playLabel = globalize.translate('Play');
     const infoLabel = globalize.translate('ButtonInfo');
 
@@ -265,20 +262,56 @@ const backdropUrl = getItemBackdropImageUrl(apiClient, item, { fillWidth: 1920, 
         const accentIndex = getTaglineAccentIndex(item.Id);
         inner += '<p class="homeHeroTagline homeHeroTagline--accent' + accentIndex + '">' + escapeHtml(tagline) + '</p>';
     }
-    if (metaRow) {
-        inner += '<p class="homeHeroMeta">' + escapeHtml(metaRow) + '</p>';
+    // Meta row: star rating · critic score · year · content rating
+    const metaItems = [];
+    if (item.CommunityRating) {
+        metaItems.push('<span class="homeHeroMetaStar"><span class="material-icons" aria-hidden="true">star</span>' + escapeHtml(item.CommunityRating.toFixed(1)) + '</span>');
+    }
+    if (typeof item.CriticRating === 'number') {
+        metaItems.push('<span class="homeHeroMetaCritic">' + escapeHtml(String(item.CriticRating)) + '%</span>');
+    }
+    if (item.ProductionYear) metaItems.push(escapeHtml(String(item.ProductionYear)));
+    if (item.OfficialRating) metaItems.push('<span class="homeHeroMetaBadge">' + escapeHtml(item.OfficialRating) + '</span>');
+    if (metaItems.length) {
+        inner += '<p class="homeHeroMeta">' + metaItems.join('<span class="homeHeroMetaDot" aria-hidden="true"> • </span>') + '</p>';
+    }
+    // Genres on a separate line
+    const genres = (item.Genres || []).slice(0, 3);
+    if (genres.length) {
+        inner += '<p class="homeHeroGenres">' + genres.map(escapeHtml).join('<span aria-hidden="true"> • </span>') + '</p>';
     }
     if (overviewShort) {
         inner += '<p class="homeHeroOverview">' + escapeHtml(overviewShort) + '</p>';
     }
+    // Three-button row: info circle · orange play pill · heart circle
+    const isFav = !!item.UserData?.IsFavorite;
     inner += '<div class="homeHeroButtons">';
+    inner += '<button type="button" class="homeHeroIconBtn itemAction" data-action="' + ItemAction.Link + '" aria-label="' + escapeHtml(infoLabel) + '"><span class="material-icons" aria-hidden="true">info</span></button>';
     inner += '<button type="button" is="emby-button" class="homeHeroBtn homeHeroBtnPlay raised" data-action="' + ItemAction.PlayMenu + '" title="' + escapeHtml(playLabel) + '"><span class="material-icons play_arrow" aria-hidden="true"></span><span>' + escapeHtml(playLabel) + '</span></button>';
-    inner += '<button type="button" is="emby-button" class="homeHeroBtn homeHeroBtnInfo flat" data-action="' + ItemAction.Link + '" title="' + escapeHtml(infoLabel) + '"><span class="material-icons info" aria-hidden="true"></span><span>' + escapeHtml(infoLabel) + '</span></button>';
+    inner += '<button type="button" class="homeHeroIconBtn homeHeroFavBtn' + (isFav ? ' homeHeroFavBtn-active' : '') + '" aria-label="' + (isFav ? 'Remove from favourites' : 'Add to favourites') + '" aria-pressed="' + String(isFav) + '"><span class="material-icons" aria-hidden="true">' + (isFav ? 'favorite' : 'favorite_border') + '</span></button>';
     inner += '</div>';
 
     contentEl.innerHTML = inner;
-    // Trigger slide-up animation on new children (class already present after first call)
     contentEl.classList.add('homeHeroContent-entering');
+
+    // Wire heart / favourite toggle
+    const favBtn = contentEl.querySelector('.homeHeroFavBtn');
+    if (favBtn) {
+        favBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const active = favBtn.classList.contains('homeHeroFavBtn-active');
+            const userId = apiClient.getCurrentUserId();
+            const icon = favBtn.querySelector('.material-icons');
+            (active ? apiClient.unmarkAsFavorite(userId, item.Id) : apiClient.markAsFavorite(userId, item.Id))
+                .then(() => {
+                    favBtn.classList.toggle('homeHeroFavBtn-active');
+                    favBtn.setAttribute('aria-pressed', String(!active));
+                    favBtn.setAttribute('aria-label', active ? 'Add to favourites' : 'Remove from favourites');
+                    if (icon) icon.textContent = active ? 'favorite_border' : 'favorite';
+                })
+                .catch(err => console.error('[homeHero] favourite toggle failed', err));
+        });
+    }
     contentEl.setAttribute('data-id', item.Id);
     contentEl.setAttribute('data-serverid', item.ServerId || apiClient.serverInfo()?.Id);
     contentEl.setAttribute('data-type', item.Type || '');
