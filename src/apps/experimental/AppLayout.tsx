@@ -47,7 +47,7 @@ export const Component = () => {
                             color: 'rgba(255, 255, 255, 0.95)',
                             backgroundColor: isTransparent
                                 ? 'transparent'
-                                : 'rgba(12, 12, 12, 0.92)',
+                                : 'rgba(6, 13, 26, 0.96)',
                             backdropFilter: isTransparent ? 'none' : 'blur(14px)',
                             WebkitBackdropFilter: isTransparent ? 'none' : 'blur(14px)',
                             transition: 'background-color 350ms ease, backdrop-filter 350ms ease',

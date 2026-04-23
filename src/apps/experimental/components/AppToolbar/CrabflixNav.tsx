@@ -8,7 +8,7 @@ import { useApi } from 'hooks/useApi';
 import { useUserViews } from 'hooks/useUserViews';
 
 // Binge-style: orange underline on active, white text, dimmed inactive
-const BRAND_ORANGE = '#e05c2a';
+const BRAND_ORANGE = '#1e77e8';
 
 const navSx = (isActive: boolean) => ({
     fontSize: '0.875rem',
