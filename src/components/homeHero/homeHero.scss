@@ -254,7 +254,7 @@ body.sandboxPage.homeHeroActive .MuiAppBar-root {
     left: 0;
     right: 0;
     bottom: 0;
-    padding: 2em 3em 4rem 3em;
+    padding: 2em 3em 5rem 3em;
     transition: opacity 0.35s ease;
     display: flex;
     flex-direction: column;
@@ -291,8 +291,8 @@ body.sandboxPage.homeHeroActive .MuiAppBar-root {
 }
 
 .homeHeroTagline {
-    margin: 0 0 0.35em 0;
-    font-size: clamp(0.8rem, 1.8vw, 1rem);
+    margin: 0 0 0.5em 0;
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -308,8 +308,8 @@ body.sandboxPage.homeHeroActive .MuiAppBar-root {
 }
 
 .homeHeroMeta {
-    margin: 0 0 0.35em 0;
-    font-size: 0.8rem;
+    margin: 0 0 0.4em 0;
+    font-size: 0.9rem;
     color: rgba(255, 255, 255, 0.75);
     text-transform: uppercase;
     letter-spacing: 0.03em;
@@ -345,8 +345,8 @@ body.sandboxPage.homeHeroActive .MuiAppBar-root {
 }
 
 .homeHeroGenres {
-    margin: 0 0 0.6em 0;
-    font-size: 0.875rem;
+    margin: 0 0 0.75em 0;
+    font-size: 0.95rem;
     color: rgba(255, 255, 255, 0.6);
     letter-spacing: 0.01em;
 }
@@ -376,9 +376,9 @@ body.sandboxPage.homeHeroActive .MuiAppBar-root {
     display: inline-flex !important;
     align-items: center !important;
     gap: 0.5em !important;
-    min-height: 2.75em !important;
-    padding: 0.6em 1.6em !important;
-    font-size: 1rem !important;
+    min-height: 3.1em !important;
+    padding: 0.65em 2em !important;
+    font-size: 1.05rem !important;
     font-weight: 700 !important;
     letter-spacing: 0.02em !important;
     border-radius: 999px !important;
@@ -410,8 +410,8 @@ body.sandboxPage.homeHeroActive .MuiAppBar-root {
 }
 
 .homeHeroIconBtn {
-    width: 2.75em !important;
-    height: 2.75em !important;
+    width: 3.1em !important;
+    height: 3.1em !important;
     border-radius: 50% !important;
     border: 1.5px solid rgba(255, 255, 255, 0.5) !important;
     background: rgba(255, 255, 255, 0.12) !important;
