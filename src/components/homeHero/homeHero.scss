@@ -251,10 +251,10 @@ body.homeHeroActive .skinHeader.semiTransparent {
     padding: 2em 3em 5rem 3em;
     transition: opacity 0.35s ease;
     display: flex;
-    flex-direction: row;
-    align-items: flex-end;
-    gap: 2.5em;
-    max-width: 82em;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    max-width: 48em;
 }
 
 .homeHeroLogoCol {

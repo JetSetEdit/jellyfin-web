@@ -295,8 +295,7 @@ const backdropUrl = getItemBackdropImageUrl(apiClient, item, { fillWidth: 1920, 
     details += '<button type="button" class="homeHeroIconBtn homeHeroFavBtn' + (isFav ? ' homeHeroFavBtn-active' : '') + '" aria-label="' + (isFav ? 'Remove from favourites' : 'Add to favourites') + '" aria-pressed="' + String(isFav) + '"><span class="material-icons" aria-hidden="true">' + (isFav ? 'favorite' : 'favorite_border') + '</span></button>';
     details += '</div>';
 
-    const inner = '<div class="homeHeroLogoCol">' + logoHtml + '</div>'
-               + '<div class="homeHeroDetailsCol">' + details + '</div>';
+    const inner = logoHtml + details;
 
     contentEl.innerHTML = inner;
     contentEl.classList.add('homeHeroContent-entering');
