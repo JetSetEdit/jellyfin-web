@@ -252,15 +252,19 @@ const backdropUrl = getItemBackdropImageUrl(apiClient, item, { fillWidth: 1920, 
         backdropEl.style.backgroundImage = backdropUrl ? `url('${escapeHtml(backdropUrl)}')` : '';
     }
 
-    let inner = '';
+    // Logo column
+    let logoHtml = '';
     if (logoUrl) {
-        inner += '<img class="homeHeroLogo" src="' + escapeHtml(logoUrl) + '" alt="' + escapeHtml(title) + '" loading="eager" />';
+        logoHtml = '<img class="homeHeroLogo" src="' + escapeHtml(logoUrl) + '" alt="' + escapeHtml(title) + '" loading="eager" />';
     } else {
-        inner += '<h1 class="homeHeroTitle">' + escapeHtml(title) + (subtitle ? ' <span class="homeHeroSubtitle">' + escapeHtml(subtitle) + '</span>' : '') + '</h1>';
+        logoHtml = '<h1 class="homeHeroTitle">' + escapeHtml(title) + (subtitle ? ' <span class="homeHeroSubtitle">' + escapeHtml(subtitle) + '</span>' : '') + '</h1>';
     }
+
+    // Details column
+    let details = '';
     if (tagline) {
         const accentIndex = getTaglineAccentIndex(item.Id);
-        inner += '<p class="homeHeroTagline homeHeroTagline--accent' + accentIndex + '">' + escapeHtml(tagline) + '</p>';
+        details += '<p class="homeHeroTagline homeHeroTagline--accent' + accentIndex + '">' + escapeHtml(tagline) + '</p>';
     }
     // Meta row: star rating · critic score · year · content rating
     const metaItems = [];
@@ -273,23 +277,26 @@ const backdropUrl = getItemBackdropImageUrl(apiClient, item, { fillWidth: 1920, 
     if (item.ProductionYear) metaItems.push(escapeHtml(String(item.ProductionYear)));
     if (item.OfficialRating) metaItems.push('<span class="homeHeroMetaBadge">' + escapeHtml(item.OfficialRating) + '</span>');
     if (metaItems.length) {
-        inner += '<p class="homeHeroMeta">' + metaItems.join('<span class="homeHeroMetaDot" aria-hidden="true"> • </span>') + '</p>';
+        details += '<p class="homeHeroMeta">' + metaItems.join('<span class="homeHeroMetaDot" aria-hidden="true"> • </span>') + '</p>';
     }
     // Genres on a separate line
     const genres = (item.Genres || []).slice(0, 3);
     if (genres.length) {
-        inner += '<p class="homeHeroGenres">' + genres.map(escapeHtml).join('<span aria-hidden="true"> • </span>') + '</p>';
+        details += '<p class="homeHeroGenres">' + genres.map(escapeHtml).join('<span aria-hidden="true"> • </span>') + '</p>';
     }
     if (overviewShort) {
-        inner += '<p class="homeHeroOverview">' + escapeHtml(overviewShort) + '</p>';
+        details += '<p class="homeHeroOverview">' + escapeHtml(overviewShort) + '</p>';
     }
-    // Three-button row: info circle · orange play pill · heart circle
+    // Three-button row: info circle · play pill · heart circle
     const isFav = !!item.UserData?.IsFavorite;
-    inner += '<div class="homeHeroButtons">';
-    inner += '<button type="button" class="homeHeroIconBtn itemAction" data-action="' + ItemAction.Link + '" aria-label="' + escapeHtml(infoLabel) + '"><span class="material-icons" aria-hidden="true">info</span></button>';
-    inner += '<button type="button" is="emby-button" class="homeHeroBtn homeHeroBtnPlay raised" data-action="' + ItemAction.PlayMenu + '" title="' + escapeHtml(playLabel) + '"><span class="material-icons play_arrow" aria-hidden="true"></span><span>' + escapeHtml(playLabel) + '</span></button>';
-    inner += '<button type="button" class="homeHeroIconBtn homeHeroFavBtn' + (isFav ? ' homeHeroFavBtn-active' : '') + '" aria-label="' + (isFav ? 'Remove from favourites' : 'Add to favourites') + '" aria-pressed="' + String(isFav) + '"><span class="material-icons" aria-hidden="true">' + (isFav ? 'favorite' : 'favorite_border') + '</span></button>';
-    inner += '</div>';
+    details += '<div class="homeHeroButtons">';
+    details += '<button type="button" class="homeHeroIconBtn itemAction" data-action="' + ItemAction.Link + '" aria-label="' + escapeHtml(infoLabel) + '"><span class="material-icons" aria-hidden="true">info</span></button>';
+    details += '<button type="button" is="emby-button" class="homeHeroBtn homeHeroBtnPlay raised" data-action="' + ItemAction.PlayMenu + '" title="' + escapeHtml(playLabel) + '"><span class="material-icons play_arrow" aria-hidden="true"></span><span>' + escapeHtml(playLabel) + '</span></button>';
+    details += '<button type="button" class="homeHeroIconBtn homeHeroFavBtn' + (isFav ? ' homeHeroFavBtn-active' : '') + '" aria-label="' + (isFav ? 'Remove from favourites' : 'Add to favourites') + '" aria-pressed="' + String(isFav) + '"><span class="material-icons" aria-hidden="true">' + (isFav ? 'favorite' : 'favorite_border') + '</span></button>';
+    details += '</div>';
+
+    const inner = '<div class="homeHeroLogoCol">' + logoHtml + '</div>'
+               + '<div class="homeHeroDetailsCol">' + details + '</div>';
 
     contentEl.innerHTML = inner;
     contentEl.classList.add('homeHeroContent-entering');
