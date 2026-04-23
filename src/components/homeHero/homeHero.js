@@ -246,6 +246,10 @@ const backdropUrl = getItemBackdropImageUrl(apiClient, item, { fillWidth: 1920, 
             backdropEl.classList.remove('homeHeroBackdrop-empty');
             backdropEl.style.backgroundImage = ''; // fixed layer shows image; hero backdrop stays transparent
         }
+        // Restart Ken Burns zoom on every slide
+        fixedBackdrop.classList.remove('homeHeroFixedBackdrop-zooming');
+        fixedBackdrop.offsetHeight; // force reflow so animation restarts
+        fixedBackdrop.classList.add('homeHeroFixedBackdrop-zooming');
     } else if (backdropEl) {
         backdropEl.classList.remove('homeHeroBackdrop-empty');
         backdropEl.style.backgroundImage = backdropUrl ? `url('${escapeHtml(backdropUrl)}')` : '';
@@ -273,6 +277,8 @@ const backdropUrl = getItemBackdropImageUrl(apiClient, item, { fillWidth: 1920, 
     inner += '</div>';
 
     contentEl.innerHTML = inner;
+    // Trigger slide-up animation on new children (class already present after first call)
+    contentEl.classList.add('homeHeroContent-entering');
     contentEl.setAttribute('data-id', item.Id);
     contentEl.setAttribute('data-serverid', item.ServerId || apiClient.serverInfo()?.Id);
     contentEl.setAttribute('data-type', item.Type || '');

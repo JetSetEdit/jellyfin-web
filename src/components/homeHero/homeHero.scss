@@ -9,6 +9,8 @@
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.32s ease-in-out;
+    will-change: transform;
+    backface-visibility: hidden;
 
     &.homeHeroFixedBackdrop-visible {
         opacity: 1;
@@ -18,6 +20,15 @@
         /* Beat scroll-driven inline opacity so slide crossfade still works */
         opacity: 0 !important;
     }
+
+    &.homeHeroFixedBackdrop-zooming {
+        animation: homeHeroBackdropZoom 7s ease-out forwards;
+    }
+}
+
+@keyframes homeHeroBackdropZoom {
+    from { transform: scale(1.08); }
+    to { transform: scale(1.0); }
 }
 
 /* Start hero image below the navbar so it doesn’t sit under the banner and cause a jump on first scroll */
@@ -164,12 +175,14 @@ body.sandboxPage.homeHeroActive .MuiAppBar-root {
 .homeHeroDots {
     position: absolute;
     bottom: 1.25rem;
-    left: 3em;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 2;
     display: flex;
     gap: 0.5rem;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
+    white-space: nowrap;
 }
 
 .homeHeroDot {
@@ -217,6 +230,22 @@ body.sandboxPage.homeHeroActive .MuiAppBar-root {
 @keyframes homeHeroDotProgress {
     from { width: 0%; }
     to { width: 100%; }
+}
+
+/* Content enter: children slide up on each slide change */
+.homeHeroContent-entering > * {
+    animation: homeHeroContentItemIn 0.5s ease-out both;
+}
+
+.homeHeroContent-entering > *:nth-child(1) { animation-delay: 0.04s; }
+.homeHeroContent-entering > *:nth-child(2) { animation-delay: 0.10s; }
+.homeHeroContent-entering > *:nth-child(3) { animation-delay: 0.16s; }
+.homeHeroContent-entering > *:nth-child(4) { animation-delay: 0.22s; }
+.homeHeroContent-entering > *:nth-child(5) { animation-delay: 0.28s; }
+
+@keyframes homeHeroContentItemIn {
+    from { transform: translateY(14px); }
+    to   { transform: translateY(0); }
 }
 
 .homeHeroContent {
@@ -339,20 +368,98 @@ body.sandboxPage.homeHeroActive .MuiAppBar-root {
     }
 }
 
-@media (max-width: 50em) {
+/* Tablet */
+@media (max-width: 72em) {
+    .homeHeroContent {
+        padding: 2em 2.5em 4rem 2.5em;
+    }
+
+    .homeHeroOverview {
+        -webkit-line-clamp: 2;
+    }
+}
+
+/* Mobile */
+@media (max-width: 48em) {
+    .homeHero {
+        height: 75vh;
+        height: 75dvh;
+        min-height: 75vh;
+        min-height: 75dvh;
+    }
+
+    /* Centre the image rather than anchoring right on portrait screens */
+    .homeHeroFixedBackdrop {
+        background-position: center center;
+    }
+
+    /* Swap to a bottom-to-top gradient so text sits on dark ground */
+    .homeHeroFixedGradient {
+        background:
+            linear-gradient(to top,  rgba(0, 0, 0, 0.80) 0%, rgba(0, 0, 0, 0.35) 40%, transparent 70%),
+            linear-gradient(to right, rgba(0, 0, 0, 0.35) 0%, transparent 55%);
+    }
+
     .homeHeroBackdrop {
         background-attachment: scroll;
     }
 
     .homeHeroContent {
-        padding: 1.5em 1.5em 3.5rem 1.5em;
+        padding: 1.25em 1.25em 3.5rem 1.25em;
+        max-width: 100%;
     }
 
+    .homeHeroLogo {
+        max-height: clamp(3rem, 18vw, 5.5rem);
+    }
+
+    .homeHeroArrow {
+        width: 2.25rem;
+        height: 2.25rem;
+
+        .material-icons { font-size: 1.5rem; }
+    }
+
+    .homeHeroArrowPrev { left: 0.5rem; }
+    .homeHeroArrowNext { right: 0.5rem; }
+
     .homeHeroDots {
-        left: 1.5em;
+        bottom: 1rem;
     }
 
     .homeHeroOverview {
         -webkit-line-clamp: 2;
+    }
+}
+
+/* Small mobile — strip non-essential content */
+@media (max-width: 30em) {
+    .homeHero {
+        height: 70vh;
+        height: 70dvh;
+        min-height: 70vh;
+        min-height: 70dvh;
+    }
+
+    .homeHeroOverview {
+        display: none;
+    }
+
+    .homeHeroMeta {
+        display: none;
+    }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .homeHeroFixedBackdrop,
+    .homeHeroFixedBackdrop-zooming {
+        animation: none !important;
+        transform: none !important;
+    }
+
+    .homeHeroContent-entering > * {
+        animation: none !important;
+        transform: none !important;
     }
 }
