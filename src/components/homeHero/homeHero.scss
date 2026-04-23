@@ -82,24 +82,12 @@ body.homeHeroActive:not(.sandboxPage) .homeHeroFixedBackdrop {
     background: transparent;
 }
 
-/* Solid navbar when hero is active (legacy .skinHeader and experimental MUI AppBar) */
+/* Solid navbar when hero is active (legacy .skinHeader only — MUI AppBar managed by AppLayout scroll trigger) */
 body.homeHeroActive .skinHeader.skinHeader-withBackground,
 body.homeHeroActive .skinHeader.semiTransparent {
     background: #101010 !important;
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
-}
-body.homeHeroActive .MuiAppBar-root {
-    background: rgba(16, 16, 16, 0.5) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    backdrop-filter: blur(12px) !important;
-}
-
-/* Sandbox: let hero image cross under navbar (transparent nav so image shows through) */
-body.sandboxPage.homeHeroActive .MuiAppBar-root {
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 100%) !important;
-    -webkit-backdrop-filter: blur(8px) !important;
-    backdrop-filter: blur(8px) !important;
 }
 
 .homeHeroBackdrop {
@@ -232,21 +220,27 @@ body.sandboxPage.homeHeroActive .MuiAppBar-root {
     to { width: 100%; }
 }
 
-/* Content enter: children slide up on each slide change */
+/* Content enter: two-column structure — logo col slides in, details children stagger */
 .homeHeroContent-entering > * {
     animation: homeHeroContentItemIn 0.5s ease-out both;
 }
 
-.homeHeroContent-entering > *:nth-child(1) { animation-delay: 0.04s; }
-.homeHeroContent-entering > *:nth-child(2) { animation-delay: 0.10s; }
-.homeHeroContent-entering > *:nth-child(3) { animation-delay: 0.16s; }
-.homeHeroContent-entering > *:nth-child(4) { animation-delay: 0.22s; }
-.homeHeroContent-entering > *:nth-child(5) { animation-delay: 0.28s; }
-.homeHeroContent-entering > *:nth-child(6) { animation-delay: 0.34s; }
+.homeHeroContent-entering > .homeHeroLogoCol { animation-delay: 0.04s; }
+.homeHeroContent-entering > .homeHeroDetailsCol { animation-delay: 0.08s; }
+
+.homeHeroContent-entering .homeHeroDetailsCol > * {
+    animation: homeHeroContentItemIn 0.5s ease-out both;
+}
+
+.homeHeroContent-entering .homeHeroDetailsCol > *:nth-child(1) { animation-delay: 0.14s; }
+.homeHeroContent-entering .homeHeroDetailsCol > *:nth-child(2) { animation-delay: 0.20s; }
+.homeHeroContent-entering .homeHeroDetailsCol > *:nth-child(3) { animation-delay: 0.26s; }
+.homeHeroContent-entering .homeHeroDetailsCol > *:nth-child(4) { animation-delay: 0.32s; }
+.homeHeroContent-entering .homeHeroDetailsCol > *:nth-child(5) { animation-delay: 0.38s; }
 
 @keyframes homeHeroContentItemIn {
-    from { transform: translateY(14px); }
-    to   { transform: translateY(0); }
+    from { transform: translateY(14px); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
 }
 
 .homeHeroContent {
@@ -257,18 +251,35 @@ body.sandboxPage.homeHeroActive .MuiAppBar-root {
     padding: 2em 3em 5rem 3em;
     transition: opacity 0.35s ease;
     display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 2.5em;
+    max-width: 82em;
+}
+
+.homeHeroLogoCol {
+    flex: 0 0 auto;
+    max-width: 36%;
+    display: flex;
     flex-direction: column;
-    justify-content: flex-end;
     align-items: flex-start;
-    max-width: 42em;
+    justify-content: flex-end;
+}
+
+.homeHeroDetailsCol {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 32em;
 }
 
 .homeHeroLogo {
-    max-height: clamp(4.5rem, 12vw, 9rem);
+    max-height: clamp(5rem, 13vw, 11rem);
     min-height: 4rem;
     width: auto;
-    max-width: 85%;
-    margin-bottom: 0.75em;
+    max-width: 100%;
     object-fit: contain;
     object-position: left bottom;
     filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.8)) drop-shadow(0 4px 16px rgba(0, 0, 0, 0.5));
@@ -356,9 +367,8 @@ body.sandboxPage.homeHeroActive .MuiAppBar-root {
     font-size: clamp(0.875rem, 1.5vw, 1rem);
     line-height: 1.4;
     color: rgba(255, 255, 255, 0.9);
-    max-width: 42em;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
@@ -448,6 +458,11 @@ body.sandboxPage.homeHeroActive .MuiAppBar-root {
 @media (max-width: 72em) {
     .homeHeroContent {
         padding: 2em 2.5em 4rem 2.5em;
+        gap: 1.75em;
+    }
+
+    .homeHeroLogoCol {
+        max-width: 32%;
     }
 
     .homeHeroOverview {
@@ -482,6 +497,17 @@ body.sandboxPage.homeHeroActive .MuiAppBar-root {
 
     .homeHeroContent {
         padding: 1.25em 1.25em 3.5rem 1.25em;
+        max-width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75em;
+    }
+
+    .homeHeroLogoCol {
+        max-width: 100%;
+    }
+
+    .homeHeroDetailsCol {
         max-width: 100%;
     }
 
@@ -534,8 +560,10 @@ body.sandboxPage.homeHeroActive .MuiAppBar-root {
         transform: none !important;
     }
 
-    .homeHeroContent-entering > * {
+    .homeHeroContent-entering > *,
+    .homeHeroContent-entering .homeHeroDetailsCol > * {
         animation: none !important;
         transform: none !important;
+        opacity: 1 !important;
     }
 }

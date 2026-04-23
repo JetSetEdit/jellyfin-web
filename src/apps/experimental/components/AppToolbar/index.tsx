@@ -9,7 +9,7 @@ import ServerButton from 'components/toolbar/ServerButton';
 import RemotePlayButton from './RemotePlayButton';
 import SyncPlayButton from './SyncPlayButton';
 import SearchButton from './SearchButton';
-import UserViewNav from './userViews/UserViewNav';
+import CrabflixNav from './CrabflixNav';
 
 interface AppToolbarProps {
     isDrawerAvailable: boolean
@@ -56,7 +56,7 @@ const ExperimentalAppToolbar: FC<AppToolbarProps> = ({
                     <ServerButton />
 
                     {!isPublicPath && (
-                        <UserViewNav />
+                        <CrabflixNav />
                     )}
                 </Stack>
             )}

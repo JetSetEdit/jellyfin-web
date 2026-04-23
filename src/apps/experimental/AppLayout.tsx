@@ -3,11 +3,11 @@ import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import { type Theme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import useScrollTrigger from '@mui/material/useScrollTrigger';
 import { Outlet, useLocation } from 'react-router-dom';
 
 import AppBody from 'components/AppBody';
 import CustomCss from 'components/CustomCss';
-import ElevationScroll from 'components/ElevationScroll';
 import ThemeCss from 'components/ThemeCss';
 import { useApi } from 'hooks/useApi';
 
@@ -25,6 +25,11 @@ export const Component = () => {
     const isDrawerAvailable = isDrawerPath(location.pathname) && Boolean(user) && !isMediumScreen;
     const isDrawerOpen = isDrawerActive && isDrawerAvailable;
 
+    // Transparent navbar only on home (hero shows through); always dark on library pages
+    const isHomePage = location.pathname === '/home';
+    const scrolled = useScrollTrigger({ disableHysteresis: true, threshold: 10 });
+    const isTransparent = isHomePage && !scrolled;
+
     const onToggleDrawer = useCallback(() => {
         setIsDrawerActive(!isDrawerActive);
     }, [ isDrawerActive, setIsDrawerActive ]);
@@ -33,25 +38,40 @@ export const Component = () => {
         <>
             <Box sx={{ position: 'relative', display: 'flex', height: '100%' }}>
                 <StrictMode>
-                    <ElevationScroll elevate={false}>
-                        <AppBar
-                            position='fixed'
-                            sx={{
-                                width: '100%',
-                                ml: 0,
-                                backgroundColor: 'rgba(16, 16, 16, 0.5)',
-                                color: 'rgba(255, 255, 255, 0.95)',
-                                backdropFilter: 'blur(12px)',
-                                WebkitBackdropFilter: 'blur(12px)'
-                            }}
-                        >
-                            <AppToolbar
-                                isDrawerAvailable={!isMediumScreen && isDrawerAvailable}
-                                isDrawerOpen={isDrawerOpen}
-                                onDrawerButtonClick={onToggleDrawer}
-                            />
-                        </AppBar>
-                    </ElevationScroll>
+                    <AppBar
+                        position='fixed'
+                        elevation={0}
+                        sx={{
+                            width: '100%',
+                            ml: 0,
+                            color: 'rgba(255, 255, 255, 0.95)',
+                            backgroundColor: isTransparent
+                                ? 'transparent'
+                                : 'rgba(12, 12, 12, 0.92)',
+                            backdropFilter: isTransparent ? 'none' : 'blur(14px)',
+                            WebkitBackdropFilter: isTransparent ? 'none' : 'blur(14px)',
+                            transition: 'background-color 350ms ease, backdrop-filter 350ms ease',
+                            // Soft gradient bleed below navbar on the hero — avoids a hard-cut edge
+                            '&::after': {
+                                content: '""',
+                                position: 'absolute',
+                                bottom: '-48px',
+                                left: 0,
+                                right: 0,
+                                height: '48px',
+                                background: 'linear-gradient(to bottom, rgba(0,0,0,0.3), transparent)',
+                                pointerEvents: 'none',
+                                opacity: isTransparent ? 1 : 0,
+                                transition: 'opacity 350ms ease'
+                            }
+                        }}
+                    >
+                        <AppToolbar
+                            isDrawerAvailable={!isMediumScreen && isDrawerAvailable}
+                            isDrawerOpen={isDrawerOpen}
+                            onDrawerButtonClick={onToggleDrawer}
+                        />
+                    </AppBar>
 
                     {
                         isDrawerAvailable && (
