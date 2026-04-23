@@ -50,6 +50,7 @@
     "html-webpack-plugin": "5.6.3",
     "jsdom": "26.1.0",
     "mini-css-extract-plugin": "2.9.2",
+    "pngjs": "7.0.0",
     "postcss": "8.5.6",
     "postcss-loader": "8.1.1",
     "postcss-preset-env": "10.2.3",
@@ -157,6 +158,10 @@
   "scripts": {
     "start": "npm run serve",
     "serve": "webpack serve --config webpack.dev.js",
+    "serve:pi": "JELLYFIN_SERVER=http://100.74.84.18:8096 webpack serve --config webpack.dev.js",
+    "serve:crabflix": "JELLYFIN_SERVER=https://crabflix.jetsetedit.au webpack serve --config webpack.dev.js",
+    "deploy:pi": "bash scripts/deploy-pi.sh",
+    "deploy:pi:fast": "bash scripts/deploy-pi.sh --no-build",
     "build:analyze": "cross-env NODE_ENV=\"production\" webpack --config webpack.analyze.js",
     "build:development": "webpack --config webpack.dev.js",
     "build:production": "cross-env NODE_ENV=\"production\" webpack --config webpack.prod.js",
