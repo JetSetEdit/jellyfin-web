@@ -1,50 +1,50 @@
-// Blue Steel variant — Stan/Prime-inspired: deep navy background, electric blue accent.
+// Crabflix — Netflix-style: deep black background, warm crab-orange accent.
 @use '../_base/theme' with (
-    $primary-main: #1e77e8,
-    $primary-dark: #1558b0,
-    $primary-light: #4a9af0,
-    $primary-hover: rgba(30, 119, 232, 0.2),
+    $primary-main: #e05c2a,
+    $primary-dark: #b04417,
+    $primary-light: #f0834f,
+    $primary-hover: rgba(224, 92, 42, 0.2),
     $primary-contrastText: #fff,
-    $background-default: #060d1a,
-    $background-paper: #0d1829
+    $background-default: #0a0a0a,
+    $background-paper: #161616
 );
 
 /* stylelint-disable declaration-no-important */
-.selectionCommandsPanel { background: #1e77e8 !important; }
-.itemSelectionPanel { border-color: #1e77e8 !important; }
+.selectionCommandsPanel { background: #e05c2a !important; }
+.itemSelectionPanel { border-color: #e05c2a !important; }
 .emby-tab-button:hover,
-.emby-tab-button.show-focus:focus { color: #1e77e8 !important; }
-.buttonActive { color: #1e77e8 !important; }
-.navMenuOption-selected { background: #1e77e8 !important; }
-.emby-button.show-focus:focus { background: #1e77e8 !important; }
+.emby-tab-button.show-focus:focus { color: #e05c2a !important; }
+.buttonActive { color: #e05c2a !important; }
+.navMenuOption-selected { background: #e05c2a !important; }
+.emby-button.show-focus:focus { background: #e05c2a !important; }
 .card:focus .cardBox.visualCardBox,
-.card:focus .cardBox:not(.visualCardBox) .cardScalable { border-color: #1e77e8 !important; }
+.card:focus .cardBox:not(.visualCardBox) .cardScalable { border-color: #e05c2a !important; }
 .emby-checkbox:checked + span + .checkboxOutline,
-.itemProgressBarForeground { background-color: #1e77e8 !important; }
+.itemProgressBarForeground { background-color: #e05c2a !important; }
 .emby-checkbox:checked + span + .checkboxOutline,
-.emby-checkbox:focus:not(:checked) + span + .checkboxOutline { border-color: #1e77e8 !important; }
-.countIndicator, .fullSyncIndicator, .mediaSourceIndicator, .playedIndicator { background: #1e77e8 !important; }
+.emby-checkbox:focus:not(:checked) + span + .checkboxOutline { border-color: #e05c2a !important; }
+.countIndicator, .fullSyncIndicator, .mediaSourceIndicator, .playedIndicator { background: #e05c2a !important; }
 
 @media (hover: hover) and (pointer: fine) {
     .paper-icon-button-light:hover:not(:disabled) {
-        color: #1e77e8 !important;
-        background-color: rgba(30, 119, 232, 0.2) !important;
+        color: #e05c2a !important;
+        background-color: rgba(224, 92, 42, 0.2) !important;
     }
 }
 .paper-icon-button-light:active:not(:disabled) {
-    color: #1e77e8 !important;
-    background-color: rgba(30, 119, 232, 0.2) !important;
+    color: #e05c2a !important;
+    background-color: rgba(224, 92, 42, 0.2) !important;
 }
 /* stylelint-enable declaration-no-important */
 
-.defaultCardBackground1 { background-color: #0f2a5e; }
-.defaultCardBackground2 { background-color: #1e77e8; }
-.defaultCardBackground3 { background-color: #0e3d80; }
-.defaultCardBackground4 { background-color: #1a2d6b; }
-.defaultCardBackground5 { background-color: #0c4fa0; }
+.defaultCardBackground1 { background-color: #2a1108; }
+.defaultCardBackground2 { background-color: #e05c2a; }
+.defaultCardBackground3 { background-color: #4a1f0e; }
+.defaultCardBackground4 { background-color: #1c0a04; }
+.defaultCardBackground5 { background-color: #8a3818; }
 
 .detailRibbon {
-    background: rgba(13, 24, 41, 0.85);
+    background: rgba(22, 22, 22, 0.85);
     background: rgba(var(--jf-palette-background-paperChannel) / 0.85);
 
     .layout-tv & {
@@ -52,8 +52,7 @@
     }
 }
 
-// Sections over the hero get a navy tint instead of grey
 .homePage .sections,
 #homeTab .sections {
-    background-color: rgba(6, 13, 26, 0.85) !important;
+    background-color: rgba(10, 10, 10, 0.85) !important;
 }

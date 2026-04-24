@@ -3,6 +3,11 @@
   "multiserver": false,
   "themes": [
     {
+      "name": "Crabflix",
+      "id": "crabflix",
+      "color": "#0a0a0a",
+      "default": true
+    }, {
       "name": "Apple TV",
       "id": "appletv",
       "color": "#bcbcbc"
@@ -13,8 +18,7 @@
     }, {
       "name": "Dark",
       "id": "dark",
-      "color": "#202020",
-      "default": true
+      "color": "#202020"
     }, {
       "name": "Light",
       "id": "light",
