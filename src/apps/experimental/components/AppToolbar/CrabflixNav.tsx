@@ -58,9 +58,11 @@ const CrabflixNav = () => {
     const isTvActive = tvLib?.Id
         ? currentLibraryId === tvLib.Id
         : location.pathname.startsWith('/tv');
-    const isCollectionsActive = collectionsLib?.Id
-        ? currentLibraryId === collectionsLib.Id
-        : location.pathname.startsWith('/collections');
+    const isCollectionsActive = !!(
+        (collectionsLib?.Id && currentLibraryId === collectionsLib.Id)
+        || searchParams.get('collectionType') === CollectionType.Boxsets
+        || location.pathname.startsWith('/collections')
+    );
 
     return (
         <>
