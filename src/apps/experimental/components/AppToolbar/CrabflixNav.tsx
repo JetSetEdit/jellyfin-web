@@ -8,7 +8,7 @@ import { useApi } from 'hooks/useApi';
 import { useUserViews } from 'hooks/useUserViews';
 
 // Binge-style: orange underline on active, white text, dimmed inactive
-const BRAND_ORANGE = '#1e77e8';
+const BRAND_ORANGE = '#e05c2a';
 
 const navSx = (isActive: boolean) => ({
     fontSize: '0.875rem',
@@ -38,6 +38,7 @@ const CrabflixNav = () => {
 
     const moviesLib = userViews?.Items?.find(v => v.CollectionType === CollectionType.Movies);
     const tvLib = userViews?.Items?.find(v => v.CollectionType === CollectionType.Tvshows);
+    const collectionsLib = userViews?.Items?.find(v => v.CollectionType === CollectionType.Boxsets);
 
     const moviesUrl = moviesLib
         ? appRouter.getRouteUrl(moviesLib, { context: moviesLib.CollectionType }).substring(1)
@@ -45,7 +46,9 @@ const CrabflixNav = () => {
     const tvUrl = tvLib
         ? appRouter.getRouteUrl(tvLib, { context: tvLib.CollectionType }).substring(1)
         : '/tv';
-    const collectionsUrl = moviesLib ? `${moviesUrl}&tab=3` : '/movies?tab=3';
+    const collectionsUrl = collectionsLib
+        ? appRouter.getRouteUrl(collectionsLib, { context: collectionsLib.CollectionType }).substring(1)
+        : '/collections';
 
     // Use library ID from query params for reliable active state across sub-routes
     const currentLibraryId = searchParams.get('topParentId');
@@ -55,6 +58,9 @@ const CrabflixNav = () => {
     const isTvActive = tvLib?.Id
         ? currentLibraryId === tvLib.Id
         : location.pathname.startsWith('/tv');
+    const isCollectionsActive = collectionsLib?.Id
+        ? currentLibraryId === collectionsLib.Id
+        : location.pathname.startsWith('/collections');
 
     return (
         <>
@@ -89,7 +95,7 @@ const CrabflixNav = () => {
                 variant='text'
                 component={Link}
                 to={collectionsUrl}
-                sx={navSx(false)}
+                sx={navSx(isCollectionsActive)}
                 disableRipple
             >
                 Collections
