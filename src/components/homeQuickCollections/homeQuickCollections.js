@@ -19,13 +19,6 @@ const boxSetQuery = {
 };
 
 function getTileImageUrl(apiClient, item) {
-    if (item.ImageTags?.Primary) {
-        return apiClient.getScaledImageUrl(item.Id, {
-            type: 'Primary',
-            tag: item.ImageTags.Primary,
-            maxWidth: 480
-        });
-    }
     if (item.BackdropImageTags?.length) {
         return apiClient.getScaledImageUrl(item.Id, {
             type: 'Backdrop',
@@ -37,6 +30,13 @@ function getTileImageUrl(apiClient, item) {
         return apiClient.getScaledImageUrl(item.Id, {
             type: 'Thumb',
             tag: item.ImageTags.Thumb,
+            maxWidth: 640
+        });
+    }
+    if (item.ImageTags?.Primary) {
+        return apiClient.getScaledImageUrl(item.Id, {
+            type: 'Primary',
+            tag: item.ImageTags.Primary,
             maxWidth: 480
         });
     }
